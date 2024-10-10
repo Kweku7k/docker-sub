@@ -1,0 +1,9 @@
+Flask~=2.2.2
+Flask-Migrate
+Flask-Script
+Flask-Cors
+requests
+mysqlclient
+pika
+
+SQLAlchemy~=1.4.46

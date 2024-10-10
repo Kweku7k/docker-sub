@@ -1,0 +1,48 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: 'python main.py'
+    ports:
+      - 8001:5000
+    volumes:
+      - .:/app
+    depends_on:
+      - db #This means db should run first, then the backend.
+      - queue
+
+
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: 'python consumer.py'
+    depends_on:
+      - db
+
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: main
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - dbdata:/var/lib/mysql
+    ports:
+      - 33067:3306 #Difference in ports because it could conflict with MYSQL installation.
+
+#
+#  rabbitmq:
+#    image: rabbitmq:management
+#    ports:
+#      - "5673:5672"  # For AMQP protocol (your application will use this)
+#      - "15673:15672"  # For RabbitMQ management UI
+#    environment:
+#      RABBITMQ_DEFAULT_USER: guest  # Default username
+#      RABBITMQ_DEFAULT_PASS: guest  # Default password
+
+
+volumes:
+  dbdata:
